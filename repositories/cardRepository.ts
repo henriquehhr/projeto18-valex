@@ -1,12 +1,15 @@
 import { connection } from "../database/database.js";
 import { mapObjectToUpdateQuery } from "../utils/sqlUtils.js";
 
-export type TransactionTypes =
+export const cardTypes = ["groceries", "restaurant", "transport", "education", "health"] as const;
+export type TransactionTypes = typeof cardTypes[number];
+
+/* export type TransactionTypes =
   | "groceries"
   | "restaurant"
   | "transport"
   | "education"
-  | "health";
+  | "health"; */
 
 export interface Card {
   id: number;
