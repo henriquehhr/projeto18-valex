@@ -114,8 +114,14 @@ export async function balance(cardId: number) {
     const transactions = await paymentRepository.findByCardId(cardId);
     const recharges = await rechargeRepository.findByCardId(cardId);
     let [totalPayments, totalRecharges, balanceAmount] = [0,0, 0];
-    transactions.forEach(p => totalPayments += p.amount);
-    recharges.forEach(r => totalRecharges += r.amount);
+    transactions.forEach(p => {
+        totalPayments += p.amount;
+        p.timestamp = dayjs(p.timestamp).format("DD/MM/YYYY").toString();
+    });
+    recharges.forEach(r => {
+        totalRecharges += r.amount;
+        r.timestamp = dayjs(r.timestamp).format("DD/MM/YYYY").toString();
+    });
     balanceAmount = totalRecharges - totalPayments;
 
     const totalBalance = {

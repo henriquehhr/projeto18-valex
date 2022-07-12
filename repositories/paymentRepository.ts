@@ -4,7 +4,7 @@ export interface Payment {
   id: number;
   cardId: number;
   businessId: number;
-  timestamp: Date;
+  timestamp: Date | string;
   amount: number;
 }
 export type PaymentWithBusinessName = Payment & { businessName: string };

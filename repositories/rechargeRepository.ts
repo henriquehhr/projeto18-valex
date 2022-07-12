@@ -3,7 +3,7 @@ import { connection } from "../database/database.js";
 export interface Recharge {
   id: number;
   cardId: number;
-  timestamp: Date;
+  timestamp: Date | string;
   amount: number;
 }
 export type RechargeInsertData = Omit<Recharge, "id" | "timestamp">;
