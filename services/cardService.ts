@@ -1,4 +1,4 @@
-import faker from "@faker-js/faker";
+import {faker} from "@faker-js/faker";
 import Cryptr from "cryptr";
 import bcrypt from "bcrypt";
 import dayjs from 'dayjs';
@@ -19,7 +19,7 @@ export async function newCard(employeeId: number, cardType: cardRepository.Trans
     if(employeeCardType)
         throw {type: "Conflict", message: "Employee already has such a card"};
     
-    const cardNumber = faker.faker.finance.creditCardNumber();
+    const cardNumber = faker.finance.creditCardNumber();
     const name = employee.fullName.toUpperCase().split(" ").filter(word => word.length > 2);
     let cardholderName = "";
     name.forEach((word, i) => {
@@ -31,7 +31,7 @@ export async function newCard(employeeId: number, cardType: cardRepository.Trans
     });
     const today = dayjs();
     const expirationDate = dayjs(new Date(today.year() + 5, today.month())).format("MM/YY");
-    const CVV = faker.faker.finance.creditCardCVV();
+    const CVV = faker.finance.creditCardCVV();
     const cryptr = new Cryptr(process.env.CRYPTR_KEY);
     const CVVencrypted = cryptr.encrypt(CVV);
     const card: cardRepository.CardInsertData = {
