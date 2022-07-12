@@ -11,5 +11,5 @@ app.use(json());
 app.use(router);
 app.use(errorHandler);
 
-const port = process.env.PORT || 5001;
+const port = +process.env.PORT || 5001;
 app.listen(port, () => console.log(`Server live at port: ${port}`));
