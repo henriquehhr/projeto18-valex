@@ -13,6 +13,6 @@ cardsRouter.put("/cards/activate", schemaValidator(activateCardSchema), activate
 cardsRouter.get("/cards");
 cardsRouter.get("/cards/balance");
 cardsRouter.put("/cards/freeze", schemaValidator(freezeCardSchema), freezeCard);
-cardsRouter.put("/cards/unfreeze", unfreezeCard);
+cardsRouter.put("/cards/unfreeze", schemaValidator(freezeCardSchema) ,unfreezeCard);
 
 export default cardsRouter;

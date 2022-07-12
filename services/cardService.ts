@@ -78,11 +78,27 @@ export async function freezeCard(cardId: number, password: string) {
     if(dayjs().isAfter(dayjs(card.expirationDate, "MM/YY")))
         throw {type: "", message : "Card already expired"};
     if(card.isBlocked)
-        throw {type: "", message : "Card already blocked"};
+        throw {type: "", message : "Card already freezed"};
     if(!bcrypt.compareSync(password, card.password))
         throw {type: "", message : "Wrong ID or password"};
     const cardUpdate = {
         isBlocked: true
+    };
+    await cardRepository.update(cardId, cardUpdate);
+}
+
+export async function unfreezeCard(cardId: number, password: string) {
+    const card = await cardRepository.findById(cardId);
+    if(!card)
+        throw {type: "Not Found", message: "Card ID not found"};
+    if(dayjs().isAfter(dayjs(card.expirationDate, "MM/YY")))
+        throw {type: "", message : "Card already expired"};
+    if(!card.isBlocked)
+        throw {type: "", message : "Card already unfreezed"};
+    if(!bcrypt.compareSync(password, card.password))
+        throw {type: "", message : "Wrong ID or password"};
+    const cardUpdate = {
+        isBlocked: false
     };
     await cardRepository.update(cardId, cardUpdate);
 }

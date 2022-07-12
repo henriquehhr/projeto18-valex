@@ -20,4 +20,8 @@ export async function freezeCard(req: Request, res: Response) {
     res.sendStatus(200);
 }
 
-export async function unfreezeCard(req: Request, res: Response) {}
+export async function unfreezeCard(req: Request, res: Response) {
+    const {cardId, password} = req.body;
+    await cardService.unfreezeCard(cardId, password);
+    res.sendStatus(200);
+}
