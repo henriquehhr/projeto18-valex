@@ -13,3 +13,11 @@ export async function activateCard(req: Request, res: Response) {
     await cardService.activateCard(cardId, CVV, password);
     res.sendStatus(200);
 }
+
+export async function freezeCard(req: Request, res: Response) {
+    const {cardId, password} = req.body;
+    await cardService.freezeCard(cardId, password);
+    res.sendStatus(200);
+}
+
+export async function unfreezeCard(req: Request, res: Response) {}
