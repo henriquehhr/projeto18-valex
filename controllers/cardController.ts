@@ -25,3 +25,9 @@ export async function unfreezeCard(req: Request, res: Response) {
     await cardService.unfreezeCard(cardId, password);
     res.sendStatus(200);
 }
+
+export async function balance(req: Request, res: Response) {
+    const cardId = parseInt(req.params.cardId);
+    const totalBalance = await cardService.balance(cardId);
+    res.send(totalBalance);
+}

@@ -6,8 +6,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import * as cardRepository from "../repositories/cardRepository.js";
-import { Company } from "../repositories/companyRepository.js";
 import * as employeeRepository from "../repositories/employeeRepository.js";
+import * as rechargeRepository from "../repositories/rechargeRepository.js";
+import * as paymentRepository from "../repositories/paymentRepository.js";
+import { Company } from "../repositories/companyRepository.js";
 
 export async function newCard(employeeId: number, cardType: cardRepository.TransactionTypes, company: Company) {
     const employee = await employeeRepository.findById(employeeId);
@@ -101,4 +103,24 @@ export async function unfreezeCard(cardId: number, password: string) {
         isBlocked: false
     };
     await cardRepository.update(cardId, cardUpdate);
+}
+
+export async function balance(cardId: number) {
+    const card = await cardRepository.findById(cardId);
+    if(!card)
+        throw {type: "Not Found", message: "Card ID not found"};
+
+    const transactions = await paymentRepository.findByCardId(cardId);
+    const recharges = await rechargeRepository.findByCardId(cardId);
+    let [totalPayments, totalRecharges, balanceAmount] = [0,0, 0];
+    transactions.forEach(p => totalPayments += p.amount);
+    recharges.forEach(r => totalRecharges += r.amount);
+    balanceAmount = totalRecharges - totalPayments;
+
+    const totalBalance = {
+        balance: balanceAmount,
+        transactions,
+        recharges
+    }
+    return totalBalance;
 }
