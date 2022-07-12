@@ -2,6 +2,8 @@ import {faker} from "@faker-js/faker";
 import Cryptr from "cryptr";
 import bcrypt from "bcrypt";
 import dayjs from 'dayjs';
+import customParseFormat from "dayjs/plugin/customParseFormat.js";
+dayjs.extend(customParseFormat);
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -34,6 +36,7 @@ export async function newCard(employeeId: number, cardType: cardRepository.Trans
     const today = dayjs();
     const expirationDate = dayjs(new Date(today.year() + 5, today.month())).format("MM/YY");
     const CVV = faker.finance.creditCardCVV();
+    console.log(CVV);
     const cryptr = new Cryptr(process.env.CRYPTR_KEY);
     const CVVencrypted = cryptr.encrypt(CVV);
     const card: cardRepository.CardInsertData = {
@@ -57,10 +60,8 @@ export async function activateCard(cardId: number, CVV: string, password: string
         throw {type: "Not Found", message: "Card ID not found"};
     if(card.password)
         throw {type: "Conflict", message: "Card already activated"};
-    if(dayjs().isAfter(dayjs(card.expirationDate, "MM/YY")))
+    if(dayjs().isAfter(dayjs(card.expirationDate, "MM/YY").add(1, "month").subtract(1, "day")))
         throw {type: "", message : "Card already expired"};
-    //if(!password.match(/^[0-9]{4}$/))
-    //    throw {type: "", message: "Password must contain exactly 4 numbers"};
     const CVVencrypted = (await cardRepository.findById(cardId)).securityCode;
     const cryptr = new Cryptr(process.env.CRYPTR_KEY);
     const CVVdecrypted = cryptr.decrypt(CVVencrypted);
@@ -77,7 +78,7 @@ export async function freezeCard(cardId: number, password: string) {
     const card = await cardRepository.findById(cardId);
     if(!card)
         throw {type: "Not Found", message: "Card ID not found"};
-    if(dayjs().isAfter(dayjs(card.expirationDate, "MM/YY")))
+        if(dayjs().isAfter(dayjs(card.expirationDate, "MM/YY").add(1, "month").subtract(1, "day")))
         throw {type: "", message : "Card already expired"};
     if(card.isBlocked)
         throw {type: "", message : "Card already freezed"};
@@ -93,7 +94,7 @@ export async function unfreezeCard(cardId: number, password: string) {
     const card = await cardRepository.findById(cardId);
     if(!card)
         throw {type: "Not Found", message: "Card ID not found"};
-    if(dayjs().isAfter(dayjs(card.expirationDate, "MM/YY")))
+        if(dayjs().isAfter(dayjs(card.expirationDate, "MM/YY").add(1, "month").subtract(1, "day")))
         throw {type: "", message : "Card already expired"};
     if(!card.isBlocked)
         throw {type: "", message : "Card already unfreezed"};

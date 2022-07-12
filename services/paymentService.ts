@@ -1,4 +1,6 @@
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat.js";
+dayjs.extend(customParseFormat);
 import bcrypt from "bcrypt";
 
 import * as cardRepository from "../repositories/cardRepository.js";
@@ -12,7 +14,7 @@ export async function payment(cardId: number, businessId: number, amount: number
         throw {type: "Not Found", message: "Card ID not found"};
     if(!card.password)
         throw {type: "", message: "Card not activated yet"};
-    if(dayjs().isAfter(dayjs(card.expirationDate, "MM/YY")))
+    if(dayjs().isAfter(dayjs(card.expirationDate, "MM/YY").add(1, "month").subtract(1, "day")))
         throw {type: "", message : "Card already expired"};
     if(card.isBlocked)
         throw {type: "", message: "Card freezed"};
