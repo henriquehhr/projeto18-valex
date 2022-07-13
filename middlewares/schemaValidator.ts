@@ -8,7 +8,6 @@ export default function schemaValidator (schema: Schema) {
         if (error)
             return res.status(422).send(error.details.map(detail => detail.message));
         next();
-        console.log("Passou na validação de esquemas");
     }
 
     return customSchemaValidator;
